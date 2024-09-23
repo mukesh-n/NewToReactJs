@@ -67,7 +67,7 @@ const ChatPopup = ({ chat, show, onClose, onAddContact }: Prop) => {
                 </div>
                 <div className="input-group mb-3">
                   <span className="input-group-text" id="basic-addon1">
-                    DisplayPic
+                    Picture
                   </span>
                   <input
                     type="text"
