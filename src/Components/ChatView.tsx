@@ -4,66 +4,45 @@ import { HiDotsVertical } from "react-icons/hi";
 import { CiSearch } from "react-icons/ci";
 import ListGroup from "./ListGroup";
 import { chats } from "../Models/Chat.model";
+import ChatPopup from "../popups/chatpopup";
 
 const ChatView = () => {
   const [searchTerm, setSearchTerm] = useState("");
-
-  let Chats: chats[] = [
+  const [addContact, setAddContact] = useState(Boolean);
+  const [selectedChat, setSelectedChat] = useState<chats | null>(null);
+  const [Chats, setChats] = useState<Array<chats>>([
     {
+      id: 1,
       name: "Mukesh",
       recentchat: "Hi there!",
       dp: "https://img.freepik.com/free-vector/cute-cool-boy-dabbing-pose-cartoon-vector-icon-illustration-people-fashion-icon-concept-isolated_138676-5680.jpg",
       mobile: "7828013122",
     },
     {
+      id: 2,
+
       name: "Jeevi",
-      recentchat: "Hi there!",
+      recentchat: "Hello!",
       dp: "https://wallpapers.com/images/hd/cartoon-pictures-ty2cqbq2er9iov7h.jpg",
       mobile: "9328033122",
     },
     {
+      id: 3,
+
       name: "Kamalesh",
-      recentchat: "Hi there!",
+      recentchat: "Hi",
       dp: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgn6ABvcqTfFPjcIbjc9hdx1H4PtQsAuVyTQ&s",
       mobile: "6538013142",
     },
     {
+      id: 4,
+
       name: "Logesh",
-      recentchat: "Hi there!",
+      recentchat: "There!",
       dp: "https://images.template.net/wp-content/uploads/2015/04/Cartoon-Love-Drawing-Template.jpg",
       mobile: "852434232",
     },
-    {
-      name: "Vicky",
-      recentchat: "Hi there!",
-      dp: "https://img.pastemagazine.com/wp-content/uploads/2022/07/18045024/johnny-bravo-sq.jpg",
-      mobile: "852434232",
-    },
-    {
-      name: "Kavya",
-      recentchat: "Hi there!",
-      dp: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmD5u2TfRztF1zQaMPqadPRldYBq5AY3AqqQ&s",
-      mobile: "852434232",
-    },
-    {
-      name: "Ramya",
-      recentchat: "Hi there!",
-      dp: "https://images.template.net/wp-content/uploads/2015/04/Cartoon-Love-Drawing-Template.jpg",
-      mobile: "852434232",
-    },
-    {
-      name: "Vijay",
-      recentchat: "Hi there!",
-      dp: "https://img.freepik.com/premium-photo/captivating-cartoon-characters-cute-kids-playful-boys-lovely-girls-digital-world_1142283-15995.jpg",
-      mobile: "852434232",
-    },
-    {
-      name: "Deena",
-      recentchat: "Hi there!",
-      dp: "https://static.vecteezy.com/system/resources/previews/023/826/012/original/boy-cartoon-character-cute-funny-illustration-eps-10-free-vector.jpg",
-      mobile: "852434232",
-    },
-  ];
+  ]);
 
   const filteredItems = Chats.filter((v) => {
     let name = v.name
@@ -79,14 +58,47 @@ const ChatView = () => {
   const handleSearch = (event: any) => {
     setSearchTerm(event.target.value);
   };
+  const handleCloseModal = () => {
+    setAddContact(false);
+  };
+  const handleAddContact = () => {
+    setSelectedChat(null);
+    setAddContact(true);
+    console.log("Opening modal");
+  };
+  const handleAddContact1 = (newContact: chats) => {
+    console.log({ newContact });
+    if (newContact.id == 0) {
+      newContact.id = Chats.length + 1;
+      setChats((prevChats) => [...prevChats, newContact]);
+    } else {
+      let index = Chats.findIndex((v) => {
+        return v.id == newContact.id;
+      });
+      if (index > -1) {
+        setChats((prevChats) => {
+          const updatedChats = [...prevChats];
+          updatedChats[index] = newContact;
+          return updatedChats;
+        });
+      }
+    }
+  };
 
   return (
     <>
+      <ChatPopup
+        show={addContact}
+        chat={selectedChat}
+        onClose={handleCloseModal}
+        onAddContact={handleAddContact1}
+      ></ChatPopup>
       <div className="d-flex flex-row align-items-center mb-2">
         <div className="h4 flex-grow-1">Chats</div>
         <BiSolidMessageSquareAdd
           className="me-3"
-          style={{ fontSize: "1.5rem" }}
+          onClick={handleAddContact}
+          style={{ fontSize: "1.5rem", cursor: "pointer" }}
         />
         <HiDotsVertical style={{ fontSize: "1.5rem" }} />
       </div>
@@ -108,7 +120,10 @@ const ChatView = () => {
         />
       </div>
 
-      <ListGroup items={filteredItems}></ListGroup>
+      <ListGroup
+        items={filteredItems}
+        onEditContact={handleAddContact1}
+      ></ListGroup>
     </>
   );
 };
